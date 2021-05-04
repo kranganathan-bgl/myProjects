@@ -1,0 +1,82 @@
+service: cas360-ws-api
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ${opt:region, 'ap-southeast-2'}
+  stage: ${opt:stage, 'dev'}
+  stackName: cas360-ws-api
+  websocketsApiName: cas360-ws-api
+  lambdaHashingVersion: "20201221"
+  logRetentionInDays: 1
+  logs:
+    websocket:
+      level: INFO
+
+  environment:
+    WS_CONNECTIONS_TABLE: cas360WSConnection
+    WS_ENDPOINT:
+      Fn::Join:
+        - ''
+        - - Ref: WebsocketsApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - ${self:provider.stage}
+    
+  deploymentBucket:
+    name: deployment.bglcorp.com.au
+
+  iam:
+    role:
+      permissionBoundary: !Sub arn:aws:iam::${AWS::AccountId}:policy/SecOps-Boundary
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:Scan
+            - dynamodb:PutItem
+          Resource:
+            Fn::GetAtt:
+              - cas360WSConnectionTable
+              - Arn
+
+functions:
+  connect:
+    handler: lambdas/handler/connection-handler.connect
+    events:
+      - websocket:
+          route: $connect
+  disconnect:
+    handler: lambdas/handler/connection-handler.disconnect
+    events:
+      - websocket:
+          route: $disconnect
+  default:
+    handler: lambdas/handler/connection-handler.default
+    events:
+      - websocket:
+          route: $default
+  notify:
+    handler: lambdas/handler/notification-handler.notify
+
+resources:
+  Resources:
+    cas360WSConnectionTable:
+        Type: AWS::DynamoDB::Table
+        Properties:
+          TableName: ${self:provider.environment.WS_CONNECTIONS_TABLE}
+          AttributeDefinitions:
+            - AttributeName: connectionId
+              AttributeType: S
+          KeySchema:
+            - AttributeName: connectionId
+              KeyType: HASH
+          SSESpecification:
+            SSEEnabled: true
+          BillingMode: PAY_PER_REQUEST
+  extensions:
+    IamRoleCustomResourcesLambdaExecution:
+      Properties:
+        PermissionsBoundary: !Sub arn:aws:iam::${AWS::AccountId}:policy/SecOps-Boundary
