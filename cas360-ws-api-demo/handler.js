@@ -78,14 +78,13 @@ exports.default = async (event) => {
 exports.notify = async (event) => {
     console.log('NOTIFY: ' + JSON.stringify(event))
   
-    const clientId = event.pathParameters.Id;
-    const body = event.body
+    const clientId = event.clientId;
+    const message = event.message;
     
     try {
         const connections = await getAllConnections(clientId);
-        console.log('connections: ', connections);
         await Promise.all(
-          connections.map(connectionId => postToConnection(connectionId, body))
+          connections.map(connectionId => postToConnection(connectionId, message))
         );
 
         return response200({ message: 'notified' });

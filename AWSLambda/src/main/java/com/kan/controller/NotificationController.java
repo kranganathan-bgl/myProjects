@@ -42,21 +42,15 @@ public class NotificationController {
 	private final String WS_API_URL_BGL = "https://bm5uudicf0.execute-api.ap-southeast-2.amazonaws.com/dev/@connections";
 
 	private final String REST_API_URL = "https://t2voqxnvu2.execute-api.ap-southeast-2.amazonaws.com/notify";
-	private final String FUNCTION_NAME = "ws-api-demo-dev-notify";
+//	private final String FUNCTION_NAME = "cas360-ws-api-dev-notify";
+	private final String FUNCTION_NAME = "cas360-ws-api-demo-dev-notify";
 
 	@PostMapping("/notify")
-	public void notify(@RequestBody Notification notification) throws JsonProcessingException {
+	public void notify3(@RequestBody Notification notification) throws JsonProcessingException {
 		System.out.println(notification);
-
-		String url = isBgl ? WS_API_URL_BGL : WS_API_URL;
-
-		System.out.println(url);
-
-		String data = "{\"connectionId\": \"" +  notification.getConnectionId() + "\", \"message\": \"" + notification.getBody() + "\"}";
-		data = "Hello from Kan";
-		System.out.println(data);
-
-		apiGatewayManagementClientService.postToConnection(notification.getConnectionId(), data, url, REGION);
+		ObjectMapper objectMapper = new ObjectMapper();
+		String payload = objectMapper.writeValueAsString(notification);
+		lambdaInvokerService.invokeFunction(Regions.AP_SOUTHEAST_2, FUNCTION_NAME, payload);
 	}
 
 	@PostMapping("/notify2")
@@ -67,11 +61,18 @@ public class NotificationController {
 		System.out.println(resp);
 	}
 
-	@PostMapping("/notify3")
-	public void notify3(@RequestBody Notification notification) throws JsonProcessingException {
-		System.out.println(notification);
-		ObjectMapper objectMapper = new ObjectMapper();
-		String payload = objectMapper.writeValueAsString(notification);
-		lambdaInvokerService.invokeFunction(Regions.AP_SOUTHEAST_2, FUNCTION_NAME, payload);
-	}
+//	@PostMapping("/notify3")
+//	public void notify(@RequestBody Notification notification) throws JsonProcessingException {
+//		System.out.println(notification);
+//
+//		String url = isBgl ? WS_API_URL_BGL : WS_API_URL;
+//
+//		System.out.println(url);
+//
+//		String data = "{\"connectionId\": \"" +  notification.getConnectionId() + "\", \"message\": \"" + notification.getBody() + "\"}";
+//		data = "Hello from Kan";
+//		System.out.println(data);
+//
+//		apiGatewayManagementClientService.postToConnection(notification.getConnectionId(), data, url, REGION);
+//	}
 }

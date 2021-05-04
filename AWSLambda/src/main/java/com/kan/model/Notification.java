@@ -1,30 +1,27 @@
 package com.kan.model;
 
 public class Notification {
-    String connectionId;
-    String body;
+    String clientId;
+    String message;
 
-    public String getConnectionId() {
-        return connectionId;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setConnectionId(String connectionId) {
-        this.connectionId = connectionId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
-    public String getBody() {
-        return body;
+    public String getMessage() {
+        return message;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
     public String toString() {
-        return "Notification{" +
-                "connectionId='" + connectionId + '\'' +
-                ", body='" + body + '\'' +
-                '}';
+        return "Notification{" + "clientId='" + clientId + '\'' + ", message='" + message + '\'' + '}';
     }
 }
