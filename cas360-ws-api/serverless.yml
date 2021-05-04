@@ -48,6 +48,11 @@ functions:
     events:
       - websocket:
           route: $connect
+          authorizer:
+            name: auth
+            identitySource: 
+              - 'route.request.querystring.auth'
+              # - 'route.request.header.auth'
   disconnect:
     handler: lambdas/handler/connection-handler.disconnect
     events:
@@ -60,6 +65,8 @@ functions:
           route: $default
   notify:
     handler: lambdas/handler/notification-handler.notify
+  auth:
+    handler: lambdas/handler/auth-handler.authorize
 
 resources:
   Resources:
