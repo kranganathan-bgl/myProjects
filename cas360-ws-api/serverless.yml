@@ -48,10 +48,10 @@ functions:
     events:
       - websocket:
           route: $connect
-          authorizer:
-            name: auth
-            identitySource: 
-              - 'route.request.querystring.auth'
+          # authorizer:
+          #   name: auth
+          #   identitySource: 
+          #     - 'route.request.querystring.auth'
               # - 'route.request.header.auth'
   disconnect:
     handler: lambdas/handler/connection-handler.disconnect
