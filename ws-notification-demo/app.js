@@ -1,7 +1,7 @@
 angular.module('WsDemoApp', [])
 .controller('WsDemoController', function($scope, $http) {
   $scope.clientId = 'Kan';
-  $scope.endPoint = 'wss://xiznjo3l62.execute-api.ap-southeast-2.amazonaws.com/dev';
+  $scope.endPoint = 'wss://l5zuna7160.execute-api.ap-southeast-2.amazonaws.com/dev';
   $scope.message = 'Hello from the Client';
   $scope.restEndPoint = 'http://localhost:8082/notify';
   

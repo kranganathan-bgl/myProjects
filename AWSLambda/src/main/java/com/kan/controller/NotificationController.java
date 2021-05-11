@@ -43,7 +43,7 @@ public class NotificationController {
 
 	private final String REST_API_URL = "https://t2voqxnvu2.execute-api.ap-southeast-2.amazonaws.com/notify";
 	private final String FUNCTION_NAME = "cas360-ws-api-dev-notify";
-//	private final String FUNCTION_NAME = "cas360-ws-api-demo-dev-notify";
+//	private final String FUNCTION_NAME = "cas360-ws-api-uat-notify";
 
 	@PostMapping("/notify")
 	public void notify3(@RequestBody Notification notification) throws JsonProcessingException {
