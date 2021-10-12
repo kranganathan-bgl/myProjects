@@ -18,7 +18,7 @@ public class AWSAthenaDataQueryController {
     private AWSAthenaDataQueryService awsAthenaDataQueryService;
 
     @GetMapping("/{type}/jobno/{jobNoFrom}/{jobNoTo}")
-    public List<JobDTO> getData(@PathVariable String type, @PathVariable Long jobNoFrom, @PathVariable Long jobNoTo){
+    public List<JobDTO> getJobs(@PathVariable String type, @PathVariable Long jobNoFrom, @PathVariable Long jobNoTo){
         return awsAthenaDataQueryService.getJobs(type, jobNoFrom, jobNoTo);
     }
 }

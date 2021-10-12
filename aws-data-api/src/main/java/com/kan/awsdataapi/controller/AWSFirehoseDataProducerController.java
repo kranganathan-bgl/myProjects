@@ -15,7 +15,7 @@ public class AWSFirehoseDataProducerController {
     private AWSFirehoseDataProducerService awsFirehoseDataProducerService;
 
     @GetMapping("/{type}/{jobNoFrom}/{jobNoTo}")
-    public String sendData(@PathVariable String type, @PathVariable Long jobNoFrom, @PathVariable Long jobNoTo) {
+    public String putJobs(@PathVariable String type, @PathVariable Long jobNoFrom, @PathVariable Long jobNoTo) {
         return awsFirehoseDataProducerService.putJobs(type, jobNoFrom, jobNoTo);
     }
 }
