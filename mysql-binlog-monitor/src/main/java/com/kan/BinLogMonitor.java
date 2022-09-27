@@ -19,7 +19,7 @@ public class BinLogMonitor {
   }
 
   private static void monitorBinLog() throws Exception {
-    BinaryLogClient client = new BinaryLogClient("localhost", 3306, "", "");
+    BinaryLogClient client = new BinaryLogClient("localhost", 3306, "six", "six6");
 
     client.registerEventListener(event -> {
       EventData data = event.getData();

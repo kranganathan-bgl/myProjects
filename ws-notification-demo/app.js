@@ -1,5 +1,8 @@
 angular.module('WsDemoApp', [])
-.controller('WsDemoController', function($scope, $http) {
+.controller('WsDemoController', function($scope, $http, $timeout) {
+  const MINUTE_MS = 60 * 1000;
+  const PING_TIME_MS = 3 * MINUTE_MS;
+
   $scope.clientId = 'Kan';
   $scope.endPoint = 'wss://l5zuna7160.execute-api.ap-southeast-2.amazonaws.com/dev';
   $scope.message = 'Hello from the Client';
@@ -11,6 +14,7 @@ angular.module('WsDemoApp', [])
     const url = `${endPoint}?clientId=${clientId}&clientName=Ranganathan`;
     console.log('connect: ', url);
     this.websocket = new WebSocket(url);
+    schedulePing();
 
     this.websocket.onopen = (evt) => {
       console.log('onopen: ', evt);
@@ -68,13 +72,27 @@ angular.module('WsDemoApp', [])
     addTolog('SENT (REST): ' + message);
   }
 
+  function schedulePing() {
+    $timeout(() => {
+      $scope.send('Ping...');
+      schedulePing();
+    }, PING_TIME_MS);
+  }
+
   function addTolog(text){
-    logs.push(text);
+    if(logs.length > 5) {
+      logs.pop();
+    }
+    logs.push(getCurrentDateTime() + ': ' + text);
     document.getElementById('log').value = logs.join('\n\n'); 
   }
 
   function clearLog(){
     logs = [];
     document.getElementById('log').value = ''; 
+  }
+
+  function getCurrentDateTime() {
+    return new Date().toLocaleString();
   }
 });

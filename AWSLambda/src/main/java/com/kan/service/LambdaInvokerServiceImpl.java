@@ -3,6 +3,7 @@ package com.kan.service;
 
 import java.nio.charset.StandardCharsets;
 
+import com.amazonaws.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -35,11 +36,16 @@ public class LambdaInvokerServiceImpl implements LambdaInvokerService{
              String ans = new String(invokeResult.getPayload().array(), StandardCharsets.UTF_8);
 
              //write out the return value
+             System.out.print("Result: ");
              System.out.println(ans);
+
+             if(!StringUtils.isNullOrEmpty(invokeResult.getFunctionError())){
+               System.out.print("Error: ");
+               System.out.println(invokeResult.getFunctionError());
+             }
 
          } catch (ServiceException e) {
              System.out.println(e);
          }
     }
-   
 }
