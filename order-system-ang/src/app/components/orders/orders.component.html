@@ -1,0 +1,15 @@
+<div class="report-region-2">
+  <table class="report-standard">
+    <tr >
+      <th>Order No</th>
+      <th>Customer Name</th>
+      <th>Last Name</th>
+      <th>Order Date</th>
+    </tr>
+    <tr *ngFor = 'let order of orders' class="highlight-row">
+      <td>{{order.id}}</td>
+      <td>{{order.customerName}}</td>
+      <td>{{order.orderDate | date : "dd-MMM-yyyy"}}</td>
+    </tr>
+  </table>
+</div>
