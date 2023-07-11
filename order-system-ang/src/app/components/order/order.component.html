@@ -1,1 +1,28 @@
-<p>order works!</p>
+<form (ngSubmit)="addOrder()">
+  <div class="button-region">
+    <a [routerLink] = "['/orders']" class="button">Cancel</a>
+    <input type="submit" value="Save" class="button" />
+  </div>
+
+  <div class="form-region-2">
+    <table class="form-standard">
+      <tr>
+        <th><div>Create Job Type</div></th>
+      </tr>
+      <tr>
+        <td>
+          <table>
+            <tr>
+              <td>
+                <label>Customer Name</label>
+              </td>
+              <td>
+                <input name="customerName" />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</form>
