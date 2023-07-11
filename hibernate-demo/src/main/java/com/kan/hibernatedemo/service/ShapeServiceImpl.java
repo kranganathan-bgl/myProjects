@@ -2,6 +2,7 @@ package com.kan.hibernatedemo.service;
 
 import com.kan.hibernatedemo.entity.Circle;
 import com.kan.hibernatedemo.entity.Rectangle;
+import com.kan.hibernatedemo.entity.Shape;
 import com.kan.hibernatedemo.repo.CircleRepositoty;
 import com.kan.hibernatedemo.repo.RectangleRepository;
 import com.kan.hibernatedemo.repo.ShapeRepository;
@@ -32,6 +33,7 @@ public class ShapeServiceImpl implements ShapeService {
     persistRectangle();
 
 //    updateCircle(1L);
+//    updateCircleUsingShapeRepository(1L);
 //    deleteCircle(1L);
   }
 
@@ -86,5 +88,14 @@ public class ShapeServiceImpl implements ShapeService {
 //    circle.setRadius(5);
 
     circleRepositoty.save(circle);
+  }
+
+  private void updateCircleUsingShapeRepository(long id) {
+    Shape shape = shapeRepository.findById(id).orElse(null);
+    if(shape instanceof Circle) {
+      ((Circle)shape).setRadius(5);
+    }
+
+    shapeRepository.save(shape);
   }
 }
