@@ -1,5 +1,6 @@
 package com.kan.ukapidemo.service.impl;
 
+import com.kan.ukapidemo.dto.GovTalkMessageDTO;
 import com.kan.ukapidemo.dto.generated.CompanyDetailsRequest;
 import com.kan.ukapidemo.dto.generated.GovTalkMessage;
 import com.kan.ukapidemo.service.ApiService;
@@ -37,7 +38,7 @@ public class ApiServiceImpl implements ApiService {
 
   @Override
   public GovTalkMessage getCompanyDetails() {
-    GovTalkMessage govTalkMessage = messageBuilderService.getGovTalkMessage();
+    GovTalkMessageDTO govTalkMessage = messageBuilderService.getGovTalkMessage();
     govTalkMessage.setEnvelopeVersion("1.0");
 
     MessageDetails messageDetails = govTalkMessage.getHeader().getMessageDetails();
@@ -59,14 +60,14 @@ public class ApiServiceImpl implements ApiService {
 
     govTalkMessage.getBody().setCompanyDetailsRequest(companyDetailsRequest);
 
-    String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessage.class);
+    String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessageDTO.class);
     System.out.println(xmlRequest);
 
 //    String xmlResponse = httpConnectionService.sendPostRequest(xmlRequest);
     String xmlResponse = getTestXmlResponse();
     System.out.println(xmlResponse);
 
-    return (GovTalkMessage) marshalService.unmarshal(xmlResponse, GovTalkMessage.class);
+    return (GovTalkMessage) marshalService.unmarshal(xmlResponse, GovTalkMessageDTO.class);
   }
 
   private String toMD5(String input) {

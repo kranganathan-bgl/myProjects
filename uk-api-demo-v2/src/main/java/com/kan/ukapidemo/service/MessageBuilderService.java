@@ -1,7 +1,7 @@
 package com.kan.ukapidemo.service;
 
-import com.kan.ukapidemo.dto.generated.GovTalkMessage;
+import com.kan.ukapidemo.dto.GovTalkMessageDTO;
 
 public interface MessageBuilderService {
-  GovTalkMessage getGovTalkMessage();
+  GovTalkMessageDTO getGovTalkMessage();
 }

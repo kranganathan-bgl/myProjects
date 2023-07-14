@@ -305,6 +305,7 @@ public class GovTalkMessage {
     @XmlElement(name = "Body", namespace = "http://www.govtalk.gov.uk/schemas/govtalk/govtalkheader")
     protected GovTalkMessage.Body body;
 
+
     /**
      * Gets the value of the envelopeVersion property.
      * 
@@ -424,13 +425,13 @@ public class GovTalkMessage {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "companyDetailsRequest",
+//        "companyDetailsRequest",
         "any"
     })
     public static class Body {
 
-        @XmlAnyElement(lax = true)
-        protected CompanyDetailsRequest companyDetailsRequest;
+//        @XmlAnyElement(lax = true)
+//        protected CompanyDetailsRequest companyDetailsRequest;
 
         @XmlAnyElement(lax = true)
         protected Object any;
@@ -438,13 +439,13 @@ public class GovTalkMessage {
         @XmlAnyAttribute
         private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
-        public CompanyDetailsRequest getCompanyDetailsRequest() {
-            return companyDetailsRequest;
-        }
-
-        public void setCompanyDetailsRequest(CompanyDetailsRequest companyDetailsRequest) {
-            this.companyDetailsRequest = companyDetailsRequest;
-        }
+//        public CompanyDetailsRequest getCompanyDetailsRequest() {
+//            return companyDetailsRequest;
+//        }
+//
+//        public void setCompanyDetailsRequest(CompanyDetailsRequest companyDetailsRequest) {
+//            this.companyDetailsRequest = companyDetailsRequest;
+//        }
 
         /**
          * Gets the value of the any property.

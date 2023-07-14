@@ -1,6 +1,7 @@
 package com.kan.ukapidemo.service.impl;
 
-import com.kan.ukapidemo.dto.generated.GovTalkMessage;
+import com.kan.ukapidemo.dto.GovTalkMessageBodyDTO;
+import com.kan.ukapidemo.dto.GovTalkMessageDTO;
 import com.kan.ukapidemo.dto.generated.ObjectFactory;
 import com.kan.ukapidemo.service.MessageBuilderService;
 import org.springframework.stereotype.Service;
@@ -14,15 +15,15 @@ import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetail
 @Service
 public class MessageBuilderServiceImpl implements MessageBuilderService {
   @Override
-  public GovTalkMessage getGovTalkMessage() {
+  public GovTalkMessageDTO getGovTalkMessage() {
     ObjectFactory factory = new ObjectFactory();
 
-    GovTalkMessage govTalkMessage = factory.createGovTalkMessage();
+    GovTalkMessageDTO govTalkMessage = new GovTalkMessageDTO();
 
     Header header = factory.createGovTalkMessageHeader();
     GovTalkDetails govTalkDetails = factory.createGovTalkMessageGovTalkDetails();
     Keys keys = factory.createGovTalkMessageGovTalkDetailsKeys();
-    Body body = factory.createGovTalkMessageBody();
+    GovTalkMessageBodyDTO body = new GovTalkMessageBodyDTO();
 
     MessageDetails messageDetails = factory.createGovTalkMessageHeaderMessageDetails();
     SenderDetails senderDetails = factory.createGovTalkMessageHeaderSenderDetails();
