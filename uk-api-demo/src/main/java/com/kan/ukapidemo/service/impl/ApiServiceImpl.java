@@ -27,7 +27,7 @@ import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetail
 public class ApiServiceImpl implements ApiService {
 
   private static final String PRESENTER_ID = "66664245000";
-  private static final String PRESENTER_CODE = "CAREE4D99L0";
+  private static final String PRESENTER_CODE = "";
 
   private static final String TEST_PACKAGE_REF = "0012";
 
