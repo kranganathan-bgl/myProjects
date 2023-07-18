@@ -70,7 +70,6 @@
                         <source>src/main/resources/xsd</source>
                     </sources>
                     <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
-                    <noPackageLevelAnnotations>true</noPackageLevelAnnotations>
                     <packageName>com.kan.ukapidemo.dto.generated</packageName>
                     <outputDirectory>src/main/java</outputDirectory>
                     <clearOutputDir>false</clearOutputDir>

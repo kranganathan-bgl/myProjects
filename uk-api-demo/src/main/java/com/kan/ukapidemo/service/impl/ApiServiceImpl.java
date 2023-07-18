@@ -1,19 +1,38 @@
 package com.kan.ukapidemo.service.impl;
 
-import com.kan.ukapidemo.dto.GovTalkMessageDTO;
 import com.kan.ukapidemo.dto.generated.CompanyData;
 import com.kan.ukapidemo.dto.generated.CompanyDataRequest;
 import com.kan.ukapidemo.dto.generated.GovTalkMessage;
-import com.kan.ukapidemo.dto.generated.ObjectFactory;
 import com.kan.ukapidemo.service.ApiService;
 import com.kan.ukapidemo.service.HttpConnectionService;
 import com.kan.ukapidemo.service.MarshalService;
 import com.kan.ukapidemo.service.MessageBuilderService;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,7 +46,7 @@ import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetail
 public class ApiServiceImpl implements ApiService {
 
   private static final String PRESENTER_ID = "66664245000";
-  private static final String PRESENTER_CODE = "";
+  private static final String PRESENTER_CODE = "CAREE4D99L0";
 
   private static final String TEST_PACKAGE_REF = "0012";
 
@@ -39,40 +58,6 @@ public class ApiServiceImpl implements ApiService {
     this.marshalService = marshalService;
     this.httpConnectionService = httpConnectionService;
     this.messageBuilderService = messageBuilderService;
-  }
-
-  @Override
-  public GovTalkMessageDTO getCompanyDetails() {
-    GovTalkMessageDTO govTalkMessage = messageBuilderService.getGovTalkMessageDto();
-    govTalkMessage.setEnvelopeVersion("1.0");
-
-    MessageDetails messageDetails = govTalkMessage.getHeader().getMessageDetails();
-    messageDetails.setClazz("CompanyDataRequest");
-    messageDetails.setQualifier("request");
-    messageDetails.setTransactionID("1");
-    messageDetails.setGatewayTest(BigInteger.ONE);
-
-    SenderDetails senderDetails = govTalkMessage.getHeader().getSenderDetails();
-    IDAuthentication idAuthentication = senderDetails.getIDAuthentication();
-    idAuthentication.setSenderID(toMD5(PRESENTER_ID).toLowerCase());
-    Authentication authentication = idAuthentication.getAuthentication().get(0);
-    authentication.setMethod("clear");
-    authentication.setValue(toMD5(PRESENTER_CODE).toLowerCase());
-
-//    govTalkMessage.getBody().setCompanyDataRequest(generateCompanyDataRequest());
-    govTalkMessage.getBody().setAny(generateCompanyDataRequest());
-
-    String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessageDTO.class);
-    System.out.println(xmlRequest);
-
-//    String xmlResponse = httpConnectionService.sendPostRequest(xmlRequest);
-    String xmlResponse = getTestXmlResponse();
-    System.out.println(xmlResponse);
-
-    Object obj = marshalService.unmarshal(xmlRequest, GovTalkMessageDTO.class);
-    CompanyData companyData = (CompanyData) marshalService.unmarshal(getTestCompanyData(), CompanyData.class);
-
-    return (GovTalkMessageDTO) obj;
   }
 
   @Override
@@ -95,11 +80,16 @@ public class ApiServiceImpl implements ApiService {
 
     govTalkMessage.getBody().setAny(generateCompanyDataRequest());
 
-    String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessageDTO.class);
+    String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessage.class);
     System.out.println(xmlRequest);
 
 //    String xmlResponse = httpConnectionService.sendPostRequest(xmlRequest);
     String xmlResponse = getTestXmlResponse();
+    System.out.println(xmlResponse);
+
+    Document document = toXmlDocument(xmlResponse);
+    setNameSpaceToElement(document, "/GovTalkMessage/Body/CompanyData", "http://xmlgw.companieshouse.gov.uk");
+    xmlResponse = toXmlString(document);
     System.out.println(xmlResponse);
 
     Object obj = marshalService.unmarshal(xmlResponse, GovTalkMessage.class);
@@ -112,6 +102,59 @@ public class ApiServiceImpl implements ApiService {
     }
 
     return null;
+  }
+
+  private String toXmlString(Document document) {
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    Transformer transformer = null;
+    try {
+      transformer = transformerFactory.newTransformer();
+
+      DOMSource source = new DOMSource(document);
+      StringWriter strWriter = new StringWriter();
+      StreamResult result = new StreamResult(strWriter);
+
+      transformer.transform(source, result);
+
+      return strWriter.getBuffer().toString();
+
+    } catch (TransformerConfigurationException e) {
+      throw new RuntimeException(e);
+    } catch (TransformerException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Document toXmlDocument(String xmlStr) {
+
+    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder docBuilder = null;
+    try {
+      docBuilder = docBuilderFactory.newDocumentBuilder();
+      Document document = docBuilder.parse(new InputSource(new StringReader(xmlStr)));
+      return document;
+
+    } catch (ParserConfigurationException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } catch (SAXException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void setNameSpaceToElement(Document document, String xPathToTheElement, String nameSpace) {
+    XPath xPath = XPathFactory.newInstance().newXPath();
+    try {
+      Node node = (Node) xPath.compile(xPathToTheElement).evaluate(document, XPathConstants.NODE);
+      if(Node.ELEMENT_NODE == node.getNodeType()) {
+        Element element = (Element) node;
+        element.setAttribute("xmlns", nameSpace);
+      }
+
+    } catch (XPathExpressionException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private CompanyDataRequest generateCompanyDataRequest() {

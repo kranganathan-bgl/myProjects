@@ -1,6 +1,5 @@
 package com.kan.ukapidemo.controller;
 
-import com.kan.ukapidemo.dto.GovTalkMessageDTO;
 import com.kan.ukapidemo.dto.generated.CompanyData;
 import com.kan.ukapidemo.service.ApiService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +14,6 @@ public class ApiController {
 
   public ApiController(ApiService apiService) {
     this.apiService = apiService;
-  }
-
-  @GetMapping("/companyDetails")
-  public GovTalkMessageDTO getCompanyDetails() {
-    return apiService.getCompanyDetails();
   }
 
   @GetMapping("/companyData")
