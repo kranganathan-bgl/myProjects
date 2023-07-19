@@ -9,8 +9,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="CompanyNumber"/>
-				<xs:element name="CompanyName"/>
+				<xs:element name="CompanyNumber" type="xs:integer"/>
+				<xs:element name="CompanyName" type="xs:string"/>
 				<xs:element ref="CompanyCategory"/>
 				<xs:element name="Jurisdiction">
 					<xs:annotation>

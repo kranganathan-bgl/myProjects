@@ -33,9 +33,9 @@ import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.MessageDetails;
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails;
@@ -69,7 +69,7 @@ public class ApiServiceImpl implements ApiService {
     messageDetails.setClazz("CompanyDataRequest");
     messageDetails.setQualifier("request");
     messageDetails.setTransactionID("1");
-    messageDetails.setGatewayTest(BigInteger.ONE);
+    messageDetails.setGatewayTest(1L);
 
     SenderDetails senderDetails = govTalkMessage.getHeader().getSenderDetails();
     IDAuthentication idAuthentication = senderDetails.getIDAuthentication();
@@ -160,9 +160,9 @@ public class ApiServiceImpl implements ApiService {
   private CompanyDataRequest generateCompanyDataRequest() {
     CompanyDataRequest companyDataRequest = new CompanyDataRequest();
 
-    companyDataRequest.setCompanyNumber(BigInteger.valueOf(01234567));
+    companyDataRequest.setCompanyNumber(Long.valueOf("01234567"));
     companyDataRequest.setCompanyAuthenticationCode("AUTH01");
-    companyDataRequest.setMadeUpDate(toXMLGregorianCalendar("2016-05-13"));
+    companyDataRequest.setMadeUpDate(LocalDate.parse("2016-05-13"));
 
     return companyDataRequest;
   }
@@ -294,7 +294,7 @@ public class ApiServiceImpl implements ApiService {
                     <PSCExemptAsTradingOnRegulatedMarket>false</PSCExemptAsTradingOnRegulatedMarket>
                     <PSCExemptAsSharesAdmittedOnMarket>false</PSCExemptAsSharesAdmittedOnMarket>
                     <PSCExemptAsTradingOnUKRegulatedMarket>false</PSCExemptAsTradingOnUKRegulatedMarket>
-                    <MadeUpDate></MadeUpDate>
+                    <MadeUpDate>2023-07-19</MadeUpDate>
                     <NextDueDate></NextDueDate>
                     <RegisteredOfficeAddress>
                         <Premise></Premise>

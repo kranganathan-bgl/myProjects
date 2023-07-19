@@ -69,6 +69,9 @@
                     <sources>
                         <source>src/main/resources/xsd</source>
                     </sources>
+                    <xjbSources>
+                        <xjbSource>src/main/resources/xjb</xjbSource>
+                    </xjbSources>
                     <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
                     <packageName>com.kan.ukapidemo.dto.generated</packageName>
                     <outputDirectory>src/main/java</outputDirectory>
