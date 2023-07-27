@@ -21,24 +21,6 @@ public class MarshalServiceImpl implements MarshalService {
   @Override
   public String marshal(Object object, Class clazz) {
     JAXBContext context = null;
-
-    try {
-      StringWriter stringWriter = new StringWriter();
-
-      context = JAXBContext.newInstance(clazz);
-      Marshaller marshaller = context.createMarshaller();
-      marshaller.marshal(object, stringWriter);
-
-      return stringWriter.toString();
-
-    } catch (JAXBException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public String marshalWithouNamespace(Object object, Class clazz) {
-    JAXBContext context = null;
     try {
       StringWriter stringWriter = new StringWriter();
 
@@ -56,7 +38,6 @@ public class MarshalServiceImpl implements MarshalService {
     }
   }
 
-
   @Override
   public Object unmarshal(String xmlString, Class clazz) {
     JAXBContext context = null;
@@ -65,18 +46,6 @@ public class MarshalServiceImpl implements MarshalService {
       context = JAXBContext.newInstance(clazz);
       Unmarshaller unmarshaller = context.createUnmarshaller();
       return unmarshaller.unmarshal(stringReader);
-    } catch (JAXBException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public Object unmarshal(Node xmlNode, Class clazz) {
-    JAXBContext context = null;
-    try {
-      context = JAXBContext.newInstance(clazz);
-      Unmarshaller unmarshaller = context.createUnmarshaller();
-      return unmarshaller.unmarshal(xmlNode);
     } catch (JAXBException e) {
       throw new RuntimeException(e);
     }
@@ -100,6 +69,5 @@ public class MarshalServiceImpl implements MarshalService {
       }
     });
   }
-
 
 }

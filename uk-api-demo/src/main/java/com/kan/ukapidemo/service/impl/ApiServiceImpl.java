@@ -3,40 +3,15 @@ package com.kan.ukapidemo.service.impl;
 import com.kan.ukapidemo.dto.generated.CompanyData;
 import com.kan.ukapidemo.dto.generated.CompanyDataRequest;
 import com.kan.ukapidemo.dto.generated.GovTalkMessage;
-import com.kan.ukapidemo.service.ApiService;
-import com.kan.ukapidemo.service.HttpConnectionService;
-import com.kan.ukapidemo.service.MarshalService;
-import com.kan.ukapidemo.service.MessageBuilderService;
+import com.kan.ukapidemo.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import javax.print.Doc;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.MessageDetails;
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails;
@@ -55,10 +30,17 @@ public class ApiServiceImpl implements ApiService {
   private final HttpConnectionService httpConnectionService;
   private final MessageBuilderService messageBuilderService;
 
-  public ApiServiceImpl(MarshalService marshalService, HttpConnectionService httpConnectionService, MessageBuilderService messageBuilderService) {
+  private final XmlUtilityService xmlUtilityService;
+
+  @Autowired
+  public ApiServiceImpl(MarshalService marshalService,
+                        HttpConnectionService httpConnectionService,
+                        MessageBuilderService messageBuilderService,
+                        XmlUtilityService xmlUtilityService) {
     this.marshalService = marshalService;
     this.httpConnectionService = httpConnectionService;
     this.messageBuilderService = messageBuilderService;
+    this.xmlUtilityService = xmlUtilityService;
   }
 
   @Override
@@ -81,7 +63,7 @@ public class ApiServiceImpl implements ApiService {
 
     govTalkMessage.getBody().setAny(generateCompanyDataRequest());
 
-    String xmlRequest = marshalService.marshalWithouNamespace(govTalkMessage, GovTalkMessage.class);
+    String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessage.class);
     System.out.println(xmlRequest);
     xmlRequest = getWithNamespaceAndSchemaLocation(xmlRequest);
     System.out.println(xmlRequest);
@@ -90,9 +72,9 @@ public class ApiServiceImpl implements ApiService {
 //    String xmlResponse = getTestXmlResponse();
     System.out.println(xmlResponse);
 
-    Document document = toXmlDocument(xmlResponse);
-    setNameSpaceToElement(document, "/GovTalkMessage/Body/CompanyData", "http://xmlgw.companieshouse.gov.uk");
-    xmlResponse = toXmlString(document);
+    Document document = xmlUtilityService.convertToXmlDocument(xmlResponse);
+    setNamespaceToCompanyData(document);
+    xmlResponse = xmlUtilityService.convertToXmlString(document);
     System.out.println(xmlResponse);
 
     Object obj = marshalService.unmarshal(xmlResponse, GovTalkMessage.class);
@@ -108,82 +90,39 @@ public class ApiServiceImpl implements ApiService {
   }
 
   private String getWithNamespaceAndSchemaLocation(String xmlStr) {
-    Document document = toXmlDocument(xmlStr);
-    setNameSpaceToElement(document, "/GovTalkMessage/Body/CompanyDataRequest", "http://xmlgw.companieshouse.gov.uk");
-    setSchemaLocationToElement(document, "/GovTalkMessage/Body/CompanyDataRequest", "http://www.w3.org/2001/XMLSchema-instance", "http://xmlgw.companieshouse.gov.uk http://xmlgw.companieshouse.gov.uk/v2-1/schema/CompanyData-v3-3.xsd");
-    return toXmlString(document);
+    Document document = xmlUtilityService.convertToXmlDocument(xmlStr);
+
+//    setNamespaceAndSchemaLocationToGovTalkMessage(document);
+    setNamespaceAndSchemaLocationToCompanyDataRequest(document);
+
+    return xmlUtilityService.convertToXmlString(document);
   }
 
-  private String toXmlString(Document document) {
-    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    Transformer transformer = null;
-    try {
-      transformer = transformerFactory.newTransformer();
+  private void setNamespaceAndSchemaLocationToGovTalkMessage(Document document) {
+    LinkedHashMap<String, String> nameSpaceMap = new LinkedHashMap<>();
 
-      DOMSource source = new DOMSource(document);
-      StringWriter strWriter = new StringWriter();
-      StreamResult result = new StreamResult(strWriter);
+    nameSpaceMap.put("xmlns", "http://www.govtalk.gov.uk/schemas/govtalk/govtalkheader");
+    nameSpaceMap.put("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    nameSpaceMap.put("xsi:schemaLocation", "http://www.govtalk.gov.uk/schemas/govtalk/govtalkheader http://xmlgw.companieshouse.gov.uk/v2-1/schema/Egov_ch.xsd");
 
-      transformer.transform(source, result);
-
-      return strWriter.getBuffer().toString();
-
-    } catch (TransformerConfigurationException e) {
-      throw new RuntimeException(e);
-    } catch (TransformerException e) {
-      throw new RuntimeException(e);
-    }
+    xmlUtilityService.setXmlElementAttributes(document, "/GovTalkMessage", nameSpaceMap);
   }
 
-  private Document toXmlDocument(String xmlStr) {
+  private void setNamespaceAndSchemaLocationToCompanyDataRequest(Document document) {
+    LinkedHashMap<String, String> nameSpaceMap = new LinkedHashMap<>();
 
-    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = null;
-    try {
-      docBuilder = docBuilderFactory.newDocumentBuilder();
-      Document document = docBuilder.parse(new InputSource(new StringReader(xmlStr)));
-      return document;
+    nameSpaceMap.put("xmlns", "http://xmlgw.companieshouse.gov.uk");
+    nameSpaceMap.put("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    nameSpaceMap.put("xsi:schemaLocation", "http://xmlgw.companieshouse.gov.uk http://xmlgw.companieshouse.gov.uk/v2-1/schema/CompanyData-v3-3.xsd");
 
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException(e);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (SAXException e) {
-      throw new RuntimeException(e);
-    }
+    xmlUtilityService.setXmlElementAttributes(document, "/GovTalkMessage/Body/CompanyDataRequest", nameSpaceMap);
   }
 
-
-
-  private void setNameSpaceToElement(Document document, String xPathToTheElement, String nameSpace) {
-    XPath xPath = XPathFactory.newInstance().newXPath();
-    try {
-      Node node = (Node) xPath.compile(xPathToTheElement).evaluate(document, XPathConstants.NODE);
-      if(Node.ELEMENT_NODE == node.getNodeType()) {
-        Element element = (Element) node;
-        element.setAttribute("xmlns", nameSpace);
-      }
-
-    } catch (XPathExpressionException e) {
-      throw new RuntimeException(e);
-    }
+  private void setNamespaceToCompanyData(Document document) {
+    LinkedHashMap<String, String> nameSpaceMap = new LinkedHashMap<>();
+    nameSpaceMap.put("xmlns", "http://xmlgw.companieshouse.gov.uk");
+    xmlUtilityService.setXmlElementAttributes(document, "/GovTalkMessage/Body/CompanyData", nameSpaceMap);
   }
-
-  private void setSchemaLocationToElement(Document document, String xPathToTheElement, String nameSpace, String schemaLocation) {
-    XPath xPath = XPathFactory.newInstance().newXPath();
-    try {
-      Node node = (Node) xPath.compile(xPathToTheElement).evaluate(document, XPathConstants.NODE);
-      if(Node.ELEMENT_NODE == node.getNodeType()) {
-        Element element = (Element) node;
-        element.setAttribute("xmlns:xsi", nameSpace);
-        element.setAttribute("xsi:schemaLocation", schemaLocation);
-      }
-
-    } catch (XPathExpressionException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private CompanyDataRequest generateCompanyDataRequest() {
     CompanyDataRequest companyDataRequest = new CompanyDataRequest();
 
@@ -192,14 +131,6 @@ public class ApiServiceImpl implements ApiService {
     companyDataRequest.setMadeUpDate(LocalDate.parse("2016-05-13"));
 
     return companyDataRequest;
-  }
-
-  private XMLGregorianCalendar toXMLGregorianCalendar(String dateStr) {
-    try {
-      return DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStr);
-    } catch (DatatypeConfigurationException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private String toMD5(String input) {
