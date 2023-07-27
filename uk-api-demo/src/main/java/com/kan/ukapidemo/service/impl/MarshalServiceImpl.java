@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.StringReader;
@@ -34,6 +35,27 @@ public class MarshalServiceImpl implements MarshalService {
       throw new RuntimeException(e);
     }
   }
+
+  @Override
+  public String marshalWithouNamespace(Object object, Class clazz) {
+    JAXBContext context = null;
+    try {
+      StringWriter stringWriter = new StringWriter();
+
+      XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
+      XMLStreamWriter xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(stringWriter);
+      setNamespaceContxt(xmlStreamWriter);
+
+      context = JAXBContext.newInstance(clazz);
+      Marshaller marshaller = context.createMarshaller();
+      marshaller.marshal(object, xmlStreamWriter);
+      return stringWriter.toString();
+
+    } catch (JAXBException | XMLStreamException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 
   @Override
   public Object unmarshal(String xmlString, Class clazz) {
@@ -64,7 +86,7 @@ public class MarshalServiceImpl implements MarshalService {
     xmlStreamWriter.setNamespaceContext(new NamespaceContext() {
       @Override
       public String getNamespaceURI(String prefix) {
-        return "http://www.govtalk.gov.uk/schemas/govtalk/govtalkheader";
+        return "";
       }
 
       @Override

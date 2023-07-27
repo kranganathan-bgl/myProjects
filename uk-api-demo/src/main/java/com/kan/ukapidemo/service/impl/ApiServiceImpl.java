@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.print.Doc;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -80,11 +81,13 @@ public class ApiServiceImpl implements ApiService {
 
     govTalkMessage.getBody().setAny(generateCompanyDataRequest());
 
-    String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessage.class);
+    String xmlRequest = marshalService.marshalWithouNamespace(govTalkMessage, GovTalkMessage.class);
+    System.out.println(xmlRequest);
+    xmlRequest = getWithNamespaceAndSchemaLocation(xmlRequest);
     System.out.println(xmlRequest);
 
-//    String xmlResponse = httpConnectionService.sendPostRequest(xmlRequest);
-    String xmlResponse = getTestXmlResponse();
+    String xmlResponse = httpConnectionService.sendPostRequest(xmlRequest);
+//    String xmlResponse = getTestXmlResponse();
     System.out.println(xmlResponse);
 
     Document document = toXmlDocument(xmlResponse);
@@ -102,6 +105,13 @@ public class ApiServiceImpl implements ApiService {
     }
 
     return null;
+  }
+
+  private String getWithNamespaceAndSchemaLocation(String xmlStr) {
+    Document document = toXmlDocument(xmlStr);
+    setNameSpaceToElement(document, "/GovTalkMessage/Body/CompanyDataRequest", "http://xmlgw.companieshouse.gov.uk");
+    setSchemaLocationToElement(document, "/GovTalkMessage/Body/CompanyDataRequest", "http://www.w3.org/2001/XMLSchema-instance", "http://xmlgw.companieshouse.gov.uk http://xmlgw.companieshouse.gov.uk/v2-1/schema/CompanyData-v3-3.xsd");
+    return toXmlString(document);
   }
 
   private String toXmlString(Document document) {
@@ -143,6 +153,8 @@ public class ApiServiceImpl implements ApiService {
     }
   }
 
+
+
   private void setNameSpaceToElement(Document document, String xPathToTheElement, String nameSpace) {
     XPath xPath = XPathFactory.newInstance().newXPath();
     try {
@@ -150,6 +162,21 @@ public class ApiServiceImpl implements ApiService {
       if(Node.ELEMENT_NODE == node.getNodeType()) {
         Element element = (Element) node;
         element.setAttribute("xmlns", nameSpace);
+      }
+
+    } catch (XPathExpressionException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void setSchemaLocationToElement(Document document, String xPathToTheElement, String nameSpace, String schemaLocation) {
+    XPath xPath = XPathFactory.newInstance().newXPath();
+    try {
+      Node node = (Node) xPath.compile(xPathToTheElement).evaluate(document, XPathConstants.NODE);
+      if(Node.ELEMENT_NODE == node.getNodeType()) {
+        Element element = (Element) node;
+        element.setAttribute("xmlns:xsi", nameSpace);
+        element.setAttribute("xsi:schemaLocation", schemaLocation);
       }
 
     } catch (XPathExpressionException e) {
