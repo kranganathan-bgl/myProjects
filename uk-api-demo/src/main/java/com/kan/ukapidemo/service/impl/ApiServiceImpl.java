@@ -3,6 +3,7 @@ package com.kan.ukapidemo.service.impl;
 import com.kan.ukapidemo.dto.generated.CompanyData;
 import com.kan.ukapidemo.dto.generated.CompanyDataRequest;
 import com.kan.ukapidemo.dto.generated.GovTalkMessage;
+import com.kan.ukapidemo.dto.generated.IDAuthentication;
 import com.kan.ukapidemo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,7 @@ import java.util.LinkedHashMap;
 
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.MessageDetails;
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails;
-import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails.IDAuthentication;
-import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails.IDAuthentication.Authentication;
+import static com.kan.ukapidemo.dto.generated.IDAuthentication.Authentication;
 
 @Service
 public class ApiServiceImpl implements ApiService {
@@ -61,7 +61,7 @@ public class ApiServiceImpl implements ApiService {
     authentication.setMethod("clear");
     authentication.setValue(toMD5(PRESENTER_CODE).toLowerCase());
 
-    govTalkMessage.getBody().setAny(generateCompanyDataRequest());
+    govTalkMessage.getBody().getAny().add(generateCompanyDataRequest());
 
     String xmlRequest = marshalService.marshal(govTalkMessage, GovTalkMessage.class);
     System.out.println(xmlRequest);
@@ -80,7 +80,7 @@ public class ApiServiceImpl implements ApiService {
     Object obj = marshalService.unmarshal(xmlResponse, GovTalkMessage.class);
 
     GovTalkMessage resp = (GovTalkMessage) obj;
-    Object anyObj = resp.getBody().getAny();
+    Object anyObj = resp.getBody().getAny().get(0);
 
     if(anyObj instanceof CompanyData) {
       return (CompanyData) anyObj;
@@ -92,7 +92,7 @@ public class ApiServiceImpl implements ApiService {
   private String getWithNamespaceAndSchemaLocation(String xmlStr) {
     Document document = xmlUtilityService.convertToXmlDocument(xmlStr);
 
-//    setNamespaceAndSchemaLocationToGovTalkMessage(document);
+    setNamespaceAndSchemaLocationToGovTalkMessage(document);
     setNamespaceAndSchemaLocationToCompanyDataRequest(document);
 
     return xmlUtilityService.convertToXmlString(document);
@@ -101,9 +101,9 @@ public class ApiServiceImpl implements ApiService {
   private void setNamespaceAndSchemaLocationToGovTalkMessage(Document document) {
     LinkedHashMap<String, String> nameSpaceMap = new LinkedHashMap<>();
 
-    nameSpaceMap.put("xmlns", "http://www.govtalk.gov.uk/schemas/govtalk/govtalkheader");
+    nameSpaceMap.put("xmlns", "http://www.govtalk.gov.uk/CM/envelope");
     nameSpaceMap.put("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-    nameSpaceMap.put("xsi:schemaLocation", "http://www.govtalk.gov.uk/schemas/govtalk/govtalkheader http://xmlgw.companieshouse.gov.uk/v2-1/schema/Egov_ch.xsd");
+    nameSpaceMap.put("xsi:schemaLocation", "http://www.govtalk.gov.uk/CM/envelope http://xmlgw.companieshouse.gov.uk/v2-1/schema/Egov_ch-v2-0.xsd");
 
     xmlUtilityService.setXmlElementAttributes(document, "/GovTalkMessage", nameSpaceMap);
   }

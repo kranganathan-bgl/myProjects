@@ -1,6 +1,7 @@
 package com.kan.ukapidemo.service.impl;
 
 import com.kan.ukapidemo.dto.generated.GovTalkMessage;
+import com.kan.ukapidemo.dto.generated.IDAuthentication;
 import com.kan.ukapidemo.dto.generated.ObjectFactory;
 import com.kan.ukapidemo.service.MessageBuilderService;
 import org.springframework.stereotype.Service;
@@ -10,8 +11,7 @@ import static com.kan.ukapidemo.dto.generated.GovTalkMessage.GovTalkDetails.Keys
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header;
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.MessageDetails;
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails;
-import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails.IDAuthentication;
-import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails.IDAuthentication.Authentication;
+import static com.kan.ukapidemo.dto.generated.IDAuthentication.Authentication;
 
 @Service
 public class MessageBuilderServiceImpl implements MessageBuilderService {
@@ -30,8 +30,8 @@ public class MessageBuilderServiceImpl implements MessageBuilderService {
     MessageDetails messageDetails = factory.createGovTalkMessageHeaderMessageDetails();
     SenderDetails senderDetails = factory.createGovTalkMessageHeaderSenderDetails();
 
-    IDAuthentication idAuthentication = factory.createGovTalkMessageHeaderSenderDetailsIDAuthentication();
-    Authentication authentication = factory.createGovTalkMessageHeaderSenderDetailsIDAuthenticationAuthentication();
+    IDAuthentication idAuthentication = factory.createIDAuthentication();
+    Authentication authentication = factory.createIDAuthenticationAuthentication();
 
     govTalkMessage.setHeader(header);
     govTalkMessage.setGovTalkDetails(govTalkDetails);
