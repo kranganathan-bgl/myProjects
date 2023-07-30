@@ -3,6 +3,7 @@ package com.kan.ukapidemo.service.impl;
 import com.kan.ukapidemo.dto.generated.CompanyData;
 import com.kan.ukapidemo.dto.generated.CompanyDataRequest;
 import com.kan.ukapidemo.dto.generated.GovTalkMessage;
+import com.kan.ukapidemo.dto.generated.GovTalkMessage.GovTalkDetails.GovTalkErrors;
 import com.kan.ukapidemo.dto.generated.IDAuthentication;
 import com.kan.ukapidemo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.MessageDetails;
 import static com.kan.ukapidemo.dto.generated.GovTalkMessage.Header.SenderDetails;
@@ -80,6 +82,9 @@ public class ApiServiceImpl implements ApiService {
     Object obj = marshalService.unmarshal(xmlResponse, GovTalkMessage.class);
 
     GovTalkMessage resp = (GovTalkMessage) obj;
+
+    checkforErrors(resp);
+
     Object anyObj = resp.getBody().getAny().get(0);
 
     if(anyObj instanceof CompanyData) {
@@ -87,6 +92,25 @@ public class ApiServiceImpl implements ApiService {
     }
 
     return null;
+  }
+
+  private void checkforErrors(GovTalkMessage resp) {
+    if(resp.getHeader().getMessageDetails().getQualifier().equals("error")) {
+      List<GovTalkErrors.Error> errors = resp.getGovTalkDetails().getGovTalkErrors().getError();
+
+      StringBuilder sb = new StringBuilder();
+      sb.append("Errors:-");
+      errors.forEach(error -> {
+        sb.append("\n");
+        sb.append(error.getNumber());
+        sb.append(": ");
+        sb.append(error.getText());
+      });
+
+      System.out.println(sb.toString());
+
+      throw new RuntimeException(sb.toString());
+    }
   }
 
   private String getWithNamespaceAndSchemaLocation(String xmlStr) {
