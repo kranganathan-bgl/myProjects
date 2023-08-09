@@ -57,7 +57,7 @@ public class UtilityServiceImpl implements UtilityService {
       if (i == sampleSize) {
         remainder = (int) (n % charsLength);
       } else {
-        double divisor = Math.pow(charsLength, sampleSize - i);
+        double divisor = Math.pow(chars.length(), sampleSize - i);
         int quotient = (int) Math.ceil(n / divisor);
         remainder = quotient % charsLength;
       }
@@ -92,7 +92,8 @@ public class UtilityServiceImpl implements UtilityService {
       for (int j = 0; j < permutations.size(); j++) {
         String permutation = prefixChars.charAt(i) + permutations.get(j);
         permutationsWithPrefix.add(permutation);
-        System.out.println((i*64 + j + 1) + ": " + permutation);
+//        System.out.println((i*64 + j + 1) + ": " + permutation);
+//        System.out.println("\"" + permutation + "\",");
       }
     }
     return permutationsWithPrefix;
