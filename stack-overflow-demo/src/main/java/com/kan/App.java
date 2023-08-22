@@ -9,9 +9,10 @@ public class App {
 
     public static void main( String[] args ) {
         System.out.println( "App.main!" );
-//        m1();
+        m1();
 //        A.m1();
-        printNumberUpto(100000);
+//        printNumberRecursivelyUpto(10000);
+//        printNumberByLoopingUpto(30000);
     }
 
     private static void m1() {
@@ -27,11 +28,17 @@ public class App {
         System.out.println("m3");
     }
 
-    private static void printNumberUpto(int n) {
+    private static void printNumberRecursivelyUpto(int n) {
         if(count <= n) {
             System.out.println(count);
             count++;
-            printNumberUpto(n);
+            printNumberRecursivelyUpto(n);
+        }
+    }
+
+    private static void printNumberByLoopingUpto(int n) {
+        for (int i = 1; i <=n ; i++) {
+            System.out.println(i);
         }
     }
 }
