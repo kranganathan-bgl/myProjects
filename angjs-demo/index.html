@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="AngJsDemoApp">
+
+    <head lang="en">
+        <meta charset="utf-8">
+        <title>AngularJS Demo</title>
+        <link rel="stylesheet" href="style.css"/>
+        <script src="libs/angular.min.js"></script>
+        <script src="app.js"></script>
+        <!--<script src="components/parentComponent.js"></script>"-->
+        <!--<script src="components/childComponent.js"></script>"-->
+    </head>
+
+    <body>
+        <h1>AngularJS Demo</h1>
+
+        <div class="main" ng-controller="AngJsDemoController">
+            <div>
+                <label>a :</label>
+                <input ng-model="a"/>
+                --> {{a}}
+            </div>
+            <div>
+                <label>b :</label>
+                <input ng-model="b"/>
+                --> {{b}}
+            </div>
+
+            <!--<hr>-->
+            <!--<div ng-repeat="user in getUsers()">{{ user.name }}</div>-->
+            <!--<div ng-repeat="user in users">{{ user.name }}</div>-->
+        </div>
+
+        <!--<hr>-->
+        <!--<div class="main">-->
+        <!--    <parent-component></parent-component>-->
+        <!--</div>-->
+    </body>
+
+</html>

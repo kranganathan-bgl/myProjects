@@ -1,0 +1,15 @@
+{
+  "name": "angjs-demo",
+  "version": "1.0.0",
+  "description": "AngularJS Demo",
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  },
+  "scripts": {
+    "start": "http-server --port=3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Kan",
+  "license": "ISC"
+}
