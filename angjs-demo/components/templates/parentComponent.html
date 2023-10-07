@@ -1,0 +1,6 @@
+<div class="parent">
+    <h3>Parent</h3>
+    <label>p :</label>{{vmParent.p}}
+    <child-component input="vmParent.p" listener="vmParent.childListener">Child</child-component>
+    <button ng-click="vmParent.save()">save</button>
+</div>
