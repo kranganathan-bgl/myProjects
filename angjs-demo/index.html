@@ -6,6 +6,7 @@
         <title>AngularJS Demo</title>
         <link rel="stylesheet" href="style.css"/>
         <script src="libs/angular.min.js"></script>
+        <script src="libs/jquery.min.js"></script>
         <script src="app.js"></script>
         <!--<script src="components/parentComponent.js"></script>"-->
         <!--<script src="components/childComponent.js"></script>"-->
@@ -14,7 +15,7 @@
     <body>
         <h1>AngularJS Demo</h1>
 
-        <div class="main" ng-controller="AngJsDemoController">
+        <div id="main" class="main" ng-controller="AngJsDemoController">
             <div>
                 <label>a :</label>
                 <input ng-model="a"/>
@@ -24,6 +25,16 @@
                 <label>b :</label>
                 <input ng-model="b"/>
                 --> {{b}}
+            </div>
+            <div>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button ng-click="doSum()">Ang - Sum a & b</button>
+                --> {{c}}
+            </div>
+            <div>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button onclick="doSum2()">Dom - Sum a & b</button>
+                --> {{c}}
             </div>
 
             <!--<hr>-->
