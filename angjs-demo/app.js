@@ -8,15 +8,10 @@ myApp.controller('AngJsDemoController', ['$scope', '$rootScope', function($scope
   $scope.b = 2;
   $scope.c = 0;
 
-  $scope.getUsers = () => {
-    return [{name: 'Hank'}, {name: 'Francisco'}];
-  };
-
-  $scope.users = $scope.getUsers();
-
-  $scope.doSum = () => {
-    $scope.c = Number($scope.a) + Number($scope.b);
-  }
+  $rootScope.$watch(() => {
+    digestCounter++
+    console.log(digestCounter + " - digest process started..");
+  });
 
   $scope.$watch('a', (newValue, oldValue) => {
     console.log("watch -> a:- oldValue: " + oldValue + ", newValue: " + newValue);
@@ -34,16 +29,23 @@ myApp.controller('AngJsDemoController', ['$scope', '$rootScope', function($scope
     //}
   });
 
-  $rootScope.$watch(() => {
-    digestCounter++
-    console.log(digestCounter + " - digest process started..");
-  });
+
+  $scope.getUsers = () => {
+    return [{name: 'Hank'}, {name: 'Francisco'}];
+  };
+
+  $scope.users = $scope.getUsers();
+
+
+  $scope.doSum = () => {
+    $scope.c = Number($scope.a) + Number($scope.b);
+  }
 
 }]);
 
 var doSum2 = () => {
   const $scope = angular.element($("#main")).scope();
   $scope.c = Number($scope.a) + Number($scope.b);
-  $scope.$apply();
+  //$scope.$apply();
   //$scope.$digest();
 }
