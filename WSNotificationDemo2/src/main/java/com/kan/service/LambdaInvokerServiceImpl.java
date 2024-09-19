@@ -28,7 +28,6 @@ public class LambdaInvokerServiceImpl implements LambdaInvokerService{
          InvokeResult invokeResult = null;
          
          try {
-           ProfileCredentialsProvider awsCreds = new ProfileCredentialsProvider();
              AWSLambda awsLambda = AWSLambdaClientBuilder.standard()
                      .withCredentials(new ProfileCredentialsProvider(profile))
                      .withRegion(region).build();

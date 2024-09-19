@@ -34,10 +34,6 @@ public class NotificationController {
 	@Autowired
 	ApiGatewayManagementClientService apiGatewayManagementClientService;
 
-	private final boolean isBgl = false;
-
-	private final String REST_API_URL = "https://t2voqxnvu2.execute-api.ap-southeast-2.amazonaws.com/notify";
-
 //	From WS_API_URL_V2
 //	uat -> 			wss://ws.uat.cas360.com.au
 //	uat2 -> 		wss://ws.uat2.cas360.com.au
@@ -97,15 +93,5 @@ public class NotificationController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String payload = objectMapper.writeValueAsString(notification);
 		lambdaInvokerService.invokeFunction(region, profile, function, payload);
-	}
-
-	@PostMapping("/notify2")
-	public void notify2(@RequestBody Notification notification) throws JsonProcessingException {
-		System.out.println(notification);
-
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> resp = restTemplate.postForEntity(REST_API_URL, notification, String.class);
-
-		System.out.println(resp);
 	}
 }
