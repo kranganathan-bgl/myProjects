@@ -3,6 +3,7 @@ package com.kan.service;
 
 import java.nio.charset.StandardCharsets;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.util.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import com.amazonaws.services.lambda.model.ServiceException;
 @Service
 public class LambdaInvokerServiceImpl implements LambdaInvokerService{
     @Override
-    public void invokeFunction(Regions region, String functionName, String payload) {
+    public void invokeFunction(Regions region, String profile, String functionName, String payload) {
     	
     	 InvokeRequest invokeRequest = new InvokeRequest();
     	 invokeRequest
@@ -27,8 +28,9 @@ public class LambdaInvokerServiceImpl implements LambdaInvokerService{
          InvokeResult invokeResult = null;
          
          try {
+           ProfileCredentialsProvider awsCreds = new ProfileCredentialsProvider();
              AWSLambda awsLambda = AWSLambdaClientBuilder.standard()
-                     .withCredentials(new ProfileCredentialsProvider())
+                     .withCredentials(new ProfileCredentialsProvider(profile))
                      .withRegion(region).build();
 
              invokeResult = awsLambda.invoke(invokeRequest);
