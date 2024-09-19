@@ -1,28 +1,14 @@
 package com.kan.controller;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
-import com.amazonaws.services.apigatewaymanagementapi.AmazonApiGatewayManagementApiAsyncClient;
-import com.amazonaws.services.apigatewaymanagementapi.AmazonApiGatewayManagementApiAsyncClientBuilder;
-import com.amazonaws.services.apigatewaymanagementapi.model.PostToConnectionRequest;
-import com.amazonaws.services.apigatewaymanagementapi.model.PostToConnectionResult;
-import com.amazonaws.services.dynamodbv2.xspec.S;
-import com.kan.service.ApiGatewayManagementClientService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.amazonaws.regions.Regions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kan.model.Notification;
 import com.kan.service.LambdaInvokerService;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 @CrossOrigin
 @RestController
@@ -30,9 +16,6 @@ public class NotificationController {
 	
 	@Autowired
 	LambdaInvokerService lambdaInvokerService;
-
-	@Autowired
-	ApiGatewayManagementClientService apiGatewayManagementClientService;
 
 //	From WS_API_URL_V2
 //	uat -> 			wss://ws.uat.cas360.com.au

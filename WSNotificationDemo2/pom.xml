@@ -11,8 +11,8 @@
 	<groupId>com.kan</groupId>
 	<artifactId>WSNotificationDemo2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>AWSLambda</name>
-	<description>AWSLambda</description>
+	<name>WSNotificationDemo2</name>
+	<description>WSNotificationDemo2</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
