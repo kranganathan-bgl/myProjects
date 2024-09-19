@@ -3,10 +3,10 @@ angular.module('WsDemoApp', [])
   const MINUTE_MS = 60 * 1000;
   const PING_TIME_MS = 3 * MINUTE_MS;
 
-  $scope.clientId = 'Kan';
-  $scope.endPoint = 'wss://l5zuna7160.execute-api.ap-southeast-2.amazonaws.com/dev';
+  $scope.clientId = 'dev_kan';
+  $scope.endPoint = 'wss://ws.uat.cas360.com.au';
   $scope.message = 'Hello from the Client';
-  $scope.restEndPoint = 'http://localhost:8082/notify';
+  $scope.restEndPoint = 'http://localhost:8082/notify/uat';
   
   let logs = [];
   
@@ -48,7 +48,7 @@ angular.module('WsDemoApp', [])
       JSON.stringify({ action: 'message', data: message })
     );
 
-    addTolog('SENT (WS): ' + message);
+    // addTolog('SENT (WS): ' + message);
   };
 
   $scope.clear = function() {
